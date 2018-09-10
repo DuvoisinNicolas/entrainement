@@ -2,12 +2,16 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.PathTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.event.EventHandler;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.*;
+import javafx.scene.control.Label;
 import javafx.scene.image.*;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -16,9 +20,11 @@ public class Main extends Application {
 
     private static final double W = 800, H = 600;
 
-    private static final double speed = 0.25;
-    private static final double gravity = speed/2;
+    private static final double speed = 2;
 
+    private IntegerProperty level = new SimpleIntegerProperty(1);
+
+    private Rectangle rect;
     private static final String HERO_IMAGE_LOC =
             "http://icons.iconarchive.com/icons/raindropmemory/legendora/64/Hero-icon.png";
 
@@ -35,8 +41,23 @@ public class Main extends Application {
         heroImage = new Image(HERO_IMAGE_LOC);
         hero = new ImageView(heroImage);
 
+        buildLevel(level.getValue());
+
+        Label levelLabel = new Label("Niveau : ");
+        levelLabel.relocate(10,10);
+        Label levelValue = new Label();
+        levelValue.relocate(60,10);
+        levelValue.textProperty().bind(level.asString());
+
+
+
+
         // Groupe comprennant le héros
         Group dungeon = new Group(hero);
+        dungeon.getChildren().add(rect);
+
+        dungeon.getChildren().addAll(levelLabel,levelValue);
+
 
         // On place le héros où on veut sur l'écran
         moveHeroTo(W / 15, H / 2);
@@ -75,33 +96,12 @@ public class Main extends Application {
                 if (goSouth) dy += speed;
                 if (goEast)  dx += speed;
                 if (goWest)  dx -= speed;
-                dy = dy + gravity;
                 moveHeroBy(dx, dy);
             }
         };
         timer.start();
 
 
-        Rectangle rect = new Rectangle(W/2,0,50,50);
-
-        rect.setArcHeight(10);
-        rect.setArcWidth(10);
-        rect.setFill(Color.ORANGE);
-
-        Path path = new Path();
-        path.getElements().add(new MoveTo(rect.getX(),rect.getY()));
-        path.getElements().add(new LineTo(rect.getX(),H-rect.getHeight()/2));
-        PathTransition pathTransition = new PathTransition();
-        pathTransition.setDuration(Duration.millis(4000));
-        pathTransition.setPath(path);
-        pathTransition.setNode(rect);
-        pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
-        pathTransition.setCycleCount(Timeline.INDEFINITE);
-        pathTransition.setAutoReverse(true);
-        pathTransition.play();
-
-
-        dungeon.getChildren().add(rect);
 
 
     }
@@ -129,6 +129,40 @@ public class Main extends Application {
                 y - cy >= 0 &&
                 y + cy <= H) {
             hero.relocate(x - cx, y - cy);
+        }
+
+        testColisions(rect);
+    }
+
+    public void testColisions (Shape shape)
+    {
+        if (hero.getBoundsInParent().intersects(shape.getBoundsInParent()))
+        {
+            hero.relocate(W/15,H/2);
+        }
+    }
+
+    public void buildLevel (int i)
+    {
+        if (level.getValue() == 1)
+        {
+            rect = new Rectangle(W/2,0,50,50);
+
+            rect.setArcHeight(10);
+            rect.setArcWidth(10);
+            rect.setFill(Color.ORANGE);
+
+            Path path = new Path();
+            path.getElements().add(new MoveTo(rect.getX(),rect.getY()));
+            path.getElements().add(new LineTo(rect.getX(),H-rect.getHeight()/2));
+            PathTransition pathTransition = new PathTransition();
+            pathTransition.setDuration(Duration.millis(4000));
+            pathTransition.setPath(path);
+            pathTransition.setNode(rect);
+            pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+            pathTransition.setCycleCount(Timeline.INDEFINITE);
+            pathTransition.setAutoReverse(true);
+            pathTransition.play();
         }
     }
 
