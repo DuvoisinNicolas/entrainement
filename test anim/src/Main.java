@@ -20,16 +20,22 @@ public class Main extends Application {
 
     private static final double W = 800, H = 600;
 
-    private static final double speed = 2;
-
+    private static final double speed = 0.2;
     private IntegerProperty level = new SimpleIntegerProperty(1);
 
     private Rectangle rect;
     private static final String HERO_IMAGE_LOC =
             "http://icons.iconarchive.com/icons/raindropmemory/legendora/64/Hero-icon.png";
 
+    private static final String DOOR_IMAGE_LOC =
+            "http://christophe.delagarde.free.fr/IUT/Troll/img/head.jpg";
+
+    private Group dungeon;
     private Image heroImage;
     private Node  hero;
+
+    private Image doorImage = new Image(DOOR_IMAGE_LOC);
+    private ImageView door = new ImageView(doorImage);
 
     // Booléens à vrai si on va dans cette direction
     boolean goNorth, goSouth, goEast, goWest;
@@ -41,7 +47,9 @@ public class Main extends Application {
         heroImage = new Image(HERO_IMAGE_LOC);
         hero = new ImageView(heroImage);
 
-        buildLevel(level.getValue());
+        door.setFitHeight(100);
+        door.setFitWidth(80);
+
 
         Label levelLabel = new Label("Niveau : ");
         levelLabel.relocate(10,10);
@@ -53,8 +61,12 @@ public class Main extends Application {
 
 
         // Groupe comprennant le héros
-        Group dungeon = new Group(hero);
+        dungeon = new Group();
+        dungeon.getChildren().addAll(hero,door);
+        buildLevel();
+
         dungeon.getChildren().add(rect);
+
 
         dungeon.getChildren().addAll(levelLabel,levelValue);
 
@@ -132,6 +144,7 @@ public class Main extends Application {
         }
 
         testColisions(rect);
+        testExit();
     }
 
     public void testColisions (Shape shape)
@@ -142,11 +155,25 @@ public class Main extends Application {
         }
     }
 
-    public void buildLevel (int i)
+    public void testExit ()
     {
+        if (hero.getBoundsInParent().intersects(door.getBoundsInParent()))
+        {
+            level.set(level.get()+1);
+            buildLevel();
+        }
+    }
+
+    public void buildLevel ()
+    {
+
+        hero.relocate(W / 15, H / 2);
+        door.relocate(700,250);
+
+
         if (level.getValue() == 1)
         {
-            rect = new Rectangle(W/2,0,50,50);
+            rect = new Rectangle(W/2,0,50,400);
 
             rect.setArcHeight(10);
             rect.setArcWidth(10);
@@ -154,9 +181,9 @@ public class Main extends Application {
 
             Path path = new Path();
             path.getElements().add(new MoveTo(rect.getX(),rect.getY()));
-            path.getElements().add(new LineTo(rect.getX(),H-rect.getHeight()/2));
+            path.getElements().add(new LineTo(rect.getX(),H-rect.getWidth()/2));
             PathTransition pathTransition = new PathTransition();
-            pathTransition.setDuration(Duration.millis(4000));
+            pathTransition.setDuration(Duration.millis(1000));
             pathTransition.setPath(path);
             pathTransition.setNode(rect);
             pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
@@ -164,7 +191,31 @@ public class Main extends Application {
             pathTransition.setAutoReverse(true);
             pathTransition.play();
         }
+
+        if (level.getValue() == 2)
+        {
+            rect = new Rectangle(W/2,0,50,200);
+
+            rect.setArcHeight(10);
+            rect.setArcWidth(10);
+            rect.setFill(Color.BLUE);
+
+            Path path = new Path();
+            path.getElements().add(new MoveTo(rect.getX(),rect.getY()));
+            path.getElements().add(new LineTo(rect.getX(),H-rect.getWidth()/2));
+            PathTransition pathTransition = new PathTransition();
+            pathTransition.setDuration(Duration.millis(1000));
+            pathTransition.setPath(path);
+            pathTransition.setNode(rect);
+            pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+            pathTransition.setCycleCount(Timeline.INDEFINITE);
+            pathTransition.setAutoReverse(true);
+            pathTransition.play();
+        }
+
     }
 
     public static void main(String[] args) { launch(args); }
 }
+
+
