@@ -22,8 +22,8 @@ public class Main extends Application {
 
     private static final double W = 800, H = 600;
 
-    private static final double speed = 5;
-    private IntegerProperty level = new SimpleIntegerProperty(1);
+    private static final double speed = 0.2;
+    private IntegerProperty level = new SimpleIntegerProperty(5);
 
     private Rectangle rect1 = new Rectangle();
     private Rectangle rect2 = new Rectangle();
@@ -111,10 +111,19 @@ public class Main extends Application {
                 if (goEast)  dx += speed;
                 if (goWest)  dx -= speed;
                 moveHeroBy(dx, dy);
+
+                try
+                {
+                    testColisionAlways(rect1);
+                    testColisionAlways(rect2);
+                }
+                catch (NullPointerException npe)
+                {
+                    System.out.println("C'est tellement moche que ça marche");
+                }
             }
         };
         timer.start();
-
 
 
 
@@ -147,8 +156,8 @@ public class Main extends Application {
 
         try
         {
-            testColisions(rect1);
-            testColisions(rect2);
+            testColisionsDeplacement(rect1);
+            testColisionsDeplacement(rect2);
         }
         catch (NullPointerException npe)
         {
@@ -158,9 +167,19 @@ public class Main extends Application {
         testExit();
     }
 
-    public void testColisions (Shape shape)
+    public void testColisionAlways (Shape shape)
     {
-        if (hero.getBoundsInParent().intersects(shape.getBoundsInParent()))
+        if (hero.getBoundsInParent().intersects(shape.getBoundsInParent()) && shape.getFill().equals(Color.RED))
+        {
+            hero.relocate(W/15,H/2);
+            if(level.get()>1)
+                level.set(level.get()-1);
+            buildLevel();
+        }
+    }
+    public void testColisionsDeplacement(Shape shape)
+    {
+        if (hero.getBoundsInParent().intersects(shape.getBoundsInParent()) && shape.getFill().equals(Color.CORNFLOWERBLUE))
         {
             hero.relocate(W/15,H/2);
             if(level.get()>1)
@@ -180,7 +199,6 @@ public class Main extends Application {
 
     public void buildLevel ()
     {
-
         dungeon.getChildren().clear();
 
         dungeon.getChildren().addAll(hero,door,levelLabel,levelValue);
@@ -192,11 +210,11 @@ public class Main extends Application {
 
         if (level.getValue() == 1)
         {
-            rect1 = new Rectangle(W/2,0,400,50);
+            rect1 = new Rectangle(W/2,0,200,50);
 
             rect1.setArcHeight(10);
             rect1.setArcWidth(10);
-            rect1.setFill(Color.ORANGE);
+            rect1.setFill(Color.CORNFLOWERBLUE);
 
             Path path = new Path();
             path.getElements().add(new MoveTo(rect1.getX(), rect1.getY()));
@@ -214,16 +232,15 @@ public class Main extends Application {
 
         if (level.getValue() == 2)
         {
-
-            rect1 = new Rectangle(W/2,0,200,50);
+            rect1 = new Rectangle(W/2,0,400,50);
 
             rect1.setArcHeight(10);
             rect1.setArcWidth(10);
-            rect1.setFill(Color.BLUE);
+            rect1.setFill(Color.CORNFLOWERBLUE);
 
             Path path = new Path();
             path.getElements().add(new MoveTo(rect1.getX(), rect1.getY()));
-            path.getElements().add(new LineTo(rect1.getX(),H- rect1.getWidth()/2));
+            path.getElements().add(new LineTo(rect1.getX(),H- rect1.getHeight()/2));
             PathTransition pathTransition = new PathTransition();
             pathTransition.setDuration(Duration.millis(1000));
             pathTransition.setPath(path);
@@ -233,6 +250,7 @@ public class Main extends Application {
             pathTransition.play();
 
             dungeon.getChildren().add(rect1);
+
         }
 
         if (level.getValue() == 3)
@@ -241,7 +259,7 @@ public class Main extends Application {
 
             rect1.setArcHeight(10);
             rect1.setArcWidth(10);
-            rect1.setFill(Color.RED);
+            rect1.setFill(Color.CORNFLOWERBLUE);
 
             Path path = new Path();
             path.getElements().add(new MoveTo(rect1.getX(), rect1.getY()));
@@ -262,11 +280,11 @@ public class Main extends Application {
 
             rect1.setArcHeight(10);
             rect1.setArcWidth(10);
-            rect1.setFill(Color.BLUE);
+            rect1.setFill(Color.CORNFLOWERBLUE);
 
             Path path = new Path();
             path.getElements().add(new MoveTo(rect1.getX(), rect1.getY()));
-            path.getElements().add(new LineTo(rect1.getX(), H - rect1.getWidth() / 2));
+            path.getElements().add(new LineTo(rect1.getX(), H - rect1.getHeight() / 2));
             PathTransition pathTransition = new PathTransition();
             pathTransition.setDuration(Duration.millis(1000));
             pathTransition.setPath(path);
@@ -278,11 +296,12 @@ public class Main extends Application {
             dungeon.getChildren().add(rect1);
 
 
+
             rect2 = new Rectangle(W, H / 2, 25, 700);
 
             rect2.setArcHeight(10);
             rect2.setArcWidth(10);
-            rect2.setFill(Color.RED);
+            rect2.setFill(Color.CORNFLOWERBLUE);
 
             Path path2 = new Path();
             path2.getElements().add(new MoveTo(rect2.getX(), rect2.getY()));
@@ -299,7 +318,7 @@ public class Main extends Application {
         }
 
         if(level.getValue() == 5) {
-            rect1 = new Rectangle(W,H/2,25,700);
+            rect1 = new Rectangle(W-150,H/4,25,300);
 
             rect1.setArcHeight(10);
             rect1.setArcWidth(10);
@@ -307,16 +326,36 @@ public class Main extends Application {
 
             Path path = new Path();
             path.getElements().add(new MoveTo(rect1.getX(), rect1.getY()));
-            path.getElements().add(new CubicCurveTo(380, 0, 380, 120, 200, 120));
-            path.getElements().add(new CubicCurveTo(0, 120, 0, 240, 380, 240));            PathTransition pathTransition = new PathTransition();
-            pathTransition.setDuration(Duration.millis(1000));
+            path.getElements().add(new LineTo(100,rect1.getY()));
+            PathTransition pathTransition = new PathTransition();
+            pathTransition.setDuration(Duration.millis(1500));
             pathTransition.setPath(path);
             pathTransition.setNode(rect1);
             pathTransition.setCycleCount(Timeline.INDEFINITE);
             pathTransition.setAutoReverse(true);
             pathTransition.play();
 
-                dungeon.getChildren().add(rect1);
+            dungeon.getChildren().add(rect1);
+
+
+            rect2 = new Rectangle(150,H*0.75,25,300);
+
+            rect2.setArcHeight(10);
+            rect2.setArcWidth(10);
+            rect2.setFill(Color.RED);
+
+            Path path2 = new Path();
+            path2.getElements().add(new MoveTo(rect2.getX(), rect2.getY()));
+            path2.getElements().add(new LineTo(W-100,rect2.getY()));
+            PathTransition pathTransition2 = new PathTransition();
+            pathTransition2.setDuration(Duration.millis(1500));
+            pathTransition2.setPath(path2);
+            pathTransition2.setNode(rect2);
+            pathTransition2.setCycleCount(Timeline.INDEFINITE);
+            pathTransition2.setAutoReverse(true);
+            pathTransition2.play();
+
+            dungeon.getChildren().add(rect2);
 
             }
 
