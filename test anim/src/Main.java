@@ -24,7 +24,7 @@ public class Main extends Application {
     private static final double W = 800, H = 600;
 
     private static final double speed = 0.2;
-    private IntegerProperty level = new SimpleIntegerProperty(1);
+    private IntegerProperty level = new SimpleIntegerProperty(5);
 
     private Rectangle rect1 = new Rectangle();
     private Rectangle rect2 = new Rectangle();
@@ -385,9 +385,11 @@ public class Main extends Application {
                 rotateTransition.setByAngle(180f);
                 rotateTransition.setCycleCount(Timeline.INDEFINITE);
                 rotateTransition.setAutoReverse(true);
-            }
 
                 dungeon.getChildren().add(rect1);
+
+            }
+
 
 
         }
