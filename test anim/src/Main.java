@@ -24,7 +24,7 @@ public class Main extends Application {
     private static final double W = 800, H = 600;
 
     private static final double speed = 0.2;
-    private IntegerProperty level = new SimpleIntegerProperty(6);
+    private IntegerProperty level = new SimpleIntegerProperty(1);
 
     private Rectangle rect1 = new Rectangle();
     private Rectangle rect2 = new Rectangle();
@@ -205,10 +205,10 @@ public class Main extends Application {
 
         dungeon.getChildren().addAll(hero,door,levelLabel,levelValue);
 
-        hero.relocate(0 + hero.getLayoutX(), H / 2);
+        hero.relocate(W / 15, H / 2);
         door.relocate(700,250);
-        rect1.setFill(Color.TRANSPARENT);
-        rect2.setFill(Color.TRANSPARENT);
+        rect1 = new Rectangle();
+        rect2 = new Rectangle();
 
         if (level.getValue() == 1)
         {
@@ -364,33 +364,31 @@ public class Main extends Application {
             if ( level.get() == 6 )
             {
 
-                rect1 = new Rectangle(W/2,H*0.25,25,600);
+                rect1 = new Rectangle(W,H/2,25,700);
 
                 rect1.setArcHeight(10);
                 rect1.setArcWidth(10);
                 rect1.setFill(Color.CORNFLOWERBLUE);
 
-
-                Path path1 = new Path();
-                path1.getElements().add(new MoveTo(rect1.getX(), rect1.getY()));
+                Path path = new Path();
+                path.getElements().add(new MoveTo(rect1.getX(), rect1.getY()));
+                path.getElements().add(new LineTo(0, rect1.getY()));
                 PathTransition pathTransition = new PathTransition();
-                pathTransition.setDuration(Duration.millis(1500));
-                pathTransition.setPath(path1);
+                pathTransition.setDuration(Duration.millis(1000));
+                pathTransition.setPath(path);
                 pathTransition.setNode(rect1);
                 pathTransition.setCycleCount(Timeline.INDEFINITE);
                 pathTransition.setAutoReverse(true);
                 pathTransition.play();
 
                 RotateTransition rotateTransition = new RotateTransition(Duration.millis(3000), rect1);
-                rotateTransition.setByAngle(360);
-                rotateTransition.setNode(rect1);
+                rotateTransition.setByAngle(180f);
                 rotateTransition.setCycleCount(Timeline.INDEFINITE);
                 rotateTransition.setAutoReverse(true);
-                rotateTransition.play();
+            }
 
                 dungeon.getChildren().add(rect1);
 
-            }
 
         }
 
