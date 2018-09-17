@@ -24,7 +24,7 @@ public class Main extends Application {
     private static final double W = 800, H = 600;
 
     private static final double speed = 0.2;
-    private IntegerProperty level = new SimpleIntegerProperty(5);
+    private IntegerProperty level = new SimpleIntegerProperty(6);
 
     private Rectangle rect1 = new Rectangle();
     private Rectangle rect2 = new Rectangle();
@@ -155,15 +155,9 @@ public class Main extends Application {
             hero.relocate(x - cx, y - cy);
         }
 
-        try
-        {
-            testColisionsDeplacement(rect1);
-            testColisionsDeplacement(rect2);
-        }
-        catch (NullPointerException npe)
-        {
-            System.out.println("C'est tellement moche que ça marche");
-        }
+
+        testColisionsDeplacement(rect1);
+        testColisionsDeplacement(rect2);
 
         testExit();
     }
@@ -328,7 +322,7 @@ public class Main extends Application {
 
             Path path = new Path();
             path.getElements().add(new MoveTo(rect1.getX(), rect1.getY()));
-            path.getElements().add(new LineTo(100,rect1.getY()));
+            path.getElements().add(new LineTo(150,rect1.getY()));
             PathTransition pathTransition = new PathTransition();
             pathTransition.setDuration(Duration.millis(1500));
             pathTransition.setPath(path);
@@ -348,7 +342,7 @@ public class Main extends Application {
 
             Path path2 = new Path();
             path2.getElements().add(new MoveTo(rect2.getX(), rect2.getY()));
-            path2.getElements().add(new LineTo(W-100,rect2.getY()));
+            path2.getElements().add(new LineTo(W-150,rect2.getY()));
             PathTransition pathTransition2 = new PathTransition();
             pathTransition2.setDuration(Duration.millis(1500));
             pathTransition2.setPath(path2);
@@ -359,40 +353,40 @@ public class Main extends Application {
 
             dungeon.getChildren().add(rect2);
 
-            }
-
-            if ( level.get() == 6 )
-            {
-
-                rect1 = new Rectangle(W,H/2,25,700);
-
-                rect1.setArcHeight(10);
-                rect1.setArcWidth(10);
-                rect1.setFill(Color.CORNFLOWERBLUE);
-
-                Path path = new Path();
-                path.getElements().add(new MoveTo(rect1.getX(), rect1.getY()));
-                path.getElements().add(new LineTo(0, rect1.getY()));
-                PathTransition pathTransition = new PathTransition();
-                pathTransition.setDuration(Duration.millis(1000));
-                pathTransition.setPath(path);
-                pathTransition.setNode(rect1);
-                pathTransition.setCycleCount(Timeline.INDEFINITE);
-                pathTransition.setAutoReverse(true);
-                pathTransition.play();
-
-                RotateTransition rotateTransition = new RotateTransition(Duration.millis(3000), rect1);
-                rotateTransition.setByAngle(180f);
-                rotateTransition.setCycleCount(Timeline.INDEFINITE);
-                rotateTransition.setAutoReverse(true);
-
-                dungeon.getChildren().add(rect1);
-
-            }
-
-
 
         }
+
+        if ( level.get() == 6 ) {
+
+            rect1 = new Rectangle(W*0.5,0,25,600);
+
+            rect1.setArcHeight(10);
+            rect1.setArcWidth(10);
+            rect1.setFill(Color.RED);
+
+            Path path = new Path();
+            path.getElements().add(new MoveTo(rect1.getX(), rect1.getY()));
+            PathTransition pathTransition = new PathTransition();
+            pathTransition.setDuration(Duration.millis(3000));
+            pathTransition.setPath(path);
+            pathTransition.setNode(rect1);
+            pathTransition.setCycleCount(Timeline.INDEFINITE);
+            pathTransition.setAutoReverse(true);
+            pathTransition.play();
+
+            RotateTransition rotateTransition = new RotateTransition(Duration.millis(3000), rect1);
+            rotateTransition.setByAngle(180f);
+            rotateTransition.setCycleCount(Timeline.INDEFINITE);
+            rotateTransition.setAutoReverse(true);
+            rotateTransition.play();
+
+            dungeon.getChildren().add(rect1);
+
+        }
+
+
+
+    }
 
 
 
